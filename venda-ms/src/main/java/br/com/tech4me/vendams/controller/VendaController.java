@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.ProxyUtils.ProxyDetector;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,11 +43,9 @@ public class VendaController {
     public ResponseEntity<Venda> salvarVenda(@RequestBody VendaDto vendaDto) {
         Venda venda = new Venda();
         Produto produto = vendaDto.getProdutoVendido();
-        vendaDto.setQuantidadeVendida(10);
         produto.setQuantidadeemEstoque(produto.getQuantidadeemEstoque()-vendaDto.getQuantidadeVendida());
-//       produtoFeignClient.atualizarProduto(produto);
         BeanUtils.copyProperties(vendaDto, venda);
-        venda.setProdutoVendido(produto);
+        produtoFeignClient.atualizarProduto(produto);
         return new ResponseEntity<>(vendaService.novaVenda(venda), HttpStatus.CREATED);
     }
 
